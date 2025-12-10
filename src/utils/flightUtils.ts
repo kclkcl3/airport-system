@@ -1,5 +1,4 @@
 import { Flight, FlightNode } from '../types/Flight';
-import flightsData from '../data/flights.json';
 
 const STORAGE_KEY = 'airport_system_flights_v1';
 
@@ -7,18 +6,8 @@ export class FlightLinkedList {
 	private head: FlightNode | null = null;
 
 	constructor() {
-		// Prefer localStorage; fall back to bundled JSON
-		if (!this.loadFromLocalStorage()) {
-			this.loadFromJSONBundle();
-			this.saveToLocalStorage();
-		}
-	}
-
-	private loadFromJSONBundle(): void {
-		const flights: Flight[] = flightsData as Flight[];
-		for (let i = flights.length - 1; i >= 0; i--) {
-			this.addFlight(flights[i], /*persist*/ false);
-		}
+		// Load only from localStorage. If there's no data, start with empty list.
+		this.loadFromLocalStorage();
 	}
 
 	private saveToLocalStorage(): void {
