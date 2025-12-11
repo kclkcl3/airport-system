@@ -28,7 +28,7 @@ export class FlightLinkedList {
 			// rebuild list
 			this.head = null;
 			for (let i = flights.length - 1; i >= 0; i--) {
-				this.addFlight(flights[i], /*persist*/ false);
+				this.addFlight(flights[i], false);
 			}
 			return true;
 		} catch (e) {
@@ -36,16 +36,9 @@ export class FlightLinkedList {
 		}
 	}
 
-	/**
-	 * Export all flights as JSON string
-	 */
 	exportToJSON(): string {
 		return JSON.stringify(this.getAllFlights(), null, 2);
 	}
-
-	/**
-	 * Import flights from a JSON string. Replaces current data.
-	 */
 	importFromJSON(json: string): boolean {
 		try {
 			const flights: Flight[] = JSON.parse(json) as Flight[];
@@ -53,7 +46,7 @@ export class FlightLinkedList {
 			if (!Array.isArray(flights)) return false;
 			this.head = null;
 			for (let i = flights.length - 1; i >= 0; i--) {
-				this.addFlight(flights[i], /*persist*/ false);
+				this.addFlight(flights[i], false);
 			}
 			this.saveToLocalStorage();
 			return true;
@@ -61,10 +54,6 @@ export class FlightLinkedList {
 			return false;
 		}
 	}
-
-	/**
-	 * Clears all stored flights (in-memory and localStorage)
-	 */
 	clearAll(): void {
 		this.head = null;
 		try {
@@ -81,6 +70,7 @@ export class FlightLinkedList {
 		};
 		this.head = newNode;
 		if (persist) this.saveToLocalStorage();
+		console.log('Flight added:', this.head);
 	}
 
 	getAllFlights(): Flight[] {

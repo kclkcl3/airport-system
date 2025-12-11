@@ -109,7 +109,7 @@ const App: React.FC = () => {
 	return (
 		<div className='App'>
 			<header className='app-header'>
-				<h1>Справочная система аэропорта</h1>
+				<b>Справочная система аэропорта</b>
 				<p>Управление рейсами и бронирование билетов</p>
 			</header>
 
@@ -171,12 +171,9 @@ const App: React.FC = () => {
 			</div>
 
 			<main className='main-content'>{renderContent()}</main>
-
-			<footer className='app-footer'>
-				<p>Курсовая работа - Справочная система аэропорта</p>
-			</footer>
 		</div>
 	);
 };
 
 export default App;
+
