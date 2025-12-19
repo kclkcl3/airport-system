@@ -102,12 +102,6 @@ useEffect(() => {
 		}
 	};
 
-	const handleClearData = () => {
-		flightList.clearAll();
-		setUpdateTrigger((prev) => prev + 1);
-		setMessage({ type: 'success', text: 'Данные очищены' });
-	};
-
 	const renderContent = () => {
 		switch (activeMenu) {
 			case 'all':
@@ -182,7 +176,6 @@ useEffect(() => {
 						style={{ display: 'inline-block', marginLeft: 8 }}
 					/>
 				</label>
-				<button onClick={handleClearData}>Clear Data</button>
 				{message && (
 					<div
 						className={
