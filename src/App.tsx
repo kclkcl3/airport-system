@@ -21,9 +21,33 @@ const App: React.FC = () => {
 	} | null>(null);
 	const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
+	// Выполняется при первой загрузке и при изменении flightList или updateTrigger
+	// Вызывает getAllFlights и обновляет состояние flights через setFlights
+	// Синхронизирует связный список с массивом рейсов для отображения
 	useEffect(() => {
 		setFlights(flightList.getAllFlights());
 	}, [flightList, updateTrigger]);
+
+/*
+Пример
+// 1. Пользователь добавляет рейс
+handleFlightAdd(newFlight);
+  ↓
+// 2. Рейс добавляется в связный список
+flightList.addFlight(newFlight);
+  ↓
+// 3. Увеличиваем updateTrigger
+setUpdateTrigger(prev => prev + 1);  // 0 → 1
+  ↓
+// 4. useEffect замечает изменение updateTrigger
+useEffect(() => {
+  setFlights(flightList.getAllFlights());  // Обновляем массив
+}, [flightList, updateTrigger]);
+  ↓
+// 5. flights обновляется
+  ↓
+// 6. Компонент перерисовывается с новыми данными
+*/
 
 	const handleFlightAdd = (newFlightData: Omit<Flight, 'id'>) => {
 		const newFlight: Flight = {
@@ -115,8 +139,8 @@ const App: React.FC = () => {
 
 			<nav className='main-nav'>
 				<button
-					className={activeMenu === 'all' ? 'active' : ''}
-					onClick={() => setActiveMenu('all')}
+					className={activeMenu === 'all' ? 'active' : ''} // условие: если activeMenu равно 'all', добавляем класс 'active'
+					onClick={() => setActiveMenu('all')} // при клике меняем activeMenu на 'all'
 				>
 					Все рейсы
 				</button>
@@ -169,7 +193,7 @@ const App: React.FC = () => {
 					</div>
 				)}
 			</div>
-
+			// {renderContent()} — вызов функции, которая возвращает JSX для отображения в зависимости от activeMenu
 			<main className='main-content'>{renderContent()}</main>
 		</div>
 	);

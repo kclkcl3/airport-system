@@ -10,10 +10,11 @@ export class FlightLinkedList {
 		this.loadFromLocalStorage();
 	}
 
+	// Метод сохранения текущего списка рейсов в localStorage
 	private saveToLocalStorage(): void {
 		const flights: Flight[] = this.getAllFlights();
-		try {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(flights));
+		try { // может выбросить исключение, если storage недоступен
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(flights)); // Сохраняем массив рейсов как JSON строку
 		} catch (e) {
 			// ignore storage errors silently
 			// components should show UI messages if needed
@@ -63,22 +64,24 @@ export class FlightLinkedList {
 		}
 	}
 
-	addFlight(flight: Flight, persist = true): void {
+	// Метод добавления рейса в начало списка
+	addFlight(flight: Flight, persist = true): void { 
 		const newNode: FlightNode = {
-			flight: { ...flight, next: null },
-			next: this.head,
+			flight: { ...flight, next: null }, // Значит: возьми ВСЕ поля из flight и скопируй сюда
+			next: this.head, 
 		};
 		this.head = newNode;
 		if (persist) this.saveToLocalStorage();
 		console.log('Flight added:', this.head);
 	}
 
-	getAllFlights(): Flight[] {
-		const flights: Flight[] = [];
-		let current = this.head;
+	// Метод получения всех рейсов в виде массива
+	getAllFlights(): Flight[] { 
+		const flights: Flight[] = []; 
+		let current = this.head; // Начинаем с головы списка
 
-		while (current !== null) {
-			flights.push(current.flight);
+		while (current !== null) { 
+			flights.push(current.flight); 
 			current = current.next;
 		}
 
@@ -98,23 +101,161 @@ export class FlightLinkedList {
 		return null;
 	}
 
-	findFlightsByDestination(destination: string): Flight[] {
-		const flights: Flight[] = [];
-		let current = this.head;
+	// Метод поиска рейсов по аэропорту назначения, возвращает массив найденных рейсов(массивом является переменная flights(?не факт))
+	//Важно: Всегда возвращается массив, даже если он пустой!
+	/*
+	flights — это массив!
 
-		while (current !== null) {
+	const flights: Flight[] = [];
+	//    ↑         ↑         ↑
+	//  название   тип    пустой массив
+	*/
+	findFlightsByDestination(destination: string): Flight[] {
+		const flights: Flight[] = []; // массив для хранения найденных рейсов
+		let current = this.head; // начинаем с головы списка, текущий узел, current - указатель на текущий узел в связном списке, this.head - голова списка, где this значит текущий экземпляр класса FlightLinkedList
+
+		while (current !== null) { // пока текущий узел не null (то есть пока не достигнут конец списка)
+			// сравниваем аэропорт назначения текущего рейса с введенным пользователем аэропортом назначения, используя toLowerCase() для нечувствительного к регистру сравнения и includes() для проверки наличия подстроки
 			if (
-				current.flight.destination
+				current.flight.destination 
 					.toLowerCase()
 					.includes(destination.toLowerCase())
 			) {
-				flights.push(current.flight);
+				flights.push(current.flight); // если совпадение найдено, добавляем рейс в массив найденных рейсов в конец массива
 			}
-			current = current.next;
+			current = current.next; // переходим к следующему узлу в списке и повторяем процесс
 		}
 
-		return flights;
+		return flights; // возвращаем массив найденных рейсов
 	}
+
+/*
+Состояние:
+flights = []  ← Пустой массив
+current = head → [SU123, Москва]  ← Указывает на первый узел
+
+Шаг 2: Первая итерация цикла
+
+Проверка условия:
+current.flight.destination      // "Москва"
+  .toLowerCase()                 // "москва"
+  .includes(destination.toLowerCase())  // includes("москва")
+  
+// "москва".includes("москва") → TRUE ✅
+
+Действие:
+flights.push(current.flight);
+
+Состояние после:
+flights = [
+  { id: "1", planeNumber: "SU123", destination: "Москва", ... }
+]  ← Добавили первый рейс!
+
+current = current.next;  ← Переходим к следующему узлу
+current → [SU456, Казань]
+
+Шаг 3: Вторая итерация
+Проверка условия:
+current.flight.destination      // "Казань"
+  .toLowerCase()                 // "казань"
+  .includes("москва")            // "казань".includes("москва")
+  
+// "казань".includes("москва") → FALSE ❌
+
+Действие:
+// if НЕ выполнился, flights.push() НЕ вызвался
+// Переходим к следующему узлу
+current = current.next;
+
+Состояние после:
+flights = [
+  { id: "1", planeNumber: "SU123", destination: "Москва", ... }
+]  ← НЕ изменился
+
+current → [SU789, Москва]
+Шаг 4: Третья итерация
+Проверка условия:
+current.flight.destination      // "Москва"
+  .toLowerCase()                 // "москва"
+  .includes("москва")
+  
+// "москва".includes("москва") → TRUE ✅
+Действие:
+flights.push(current.flight);
+Состояние после:
+flights = [
+  { id: "1", planeNumber: "SU123", destination: "Москва", ... },
+  { id: "3", planeNumber: "SU789", destination: "Москва", ... }
+]  ← Добавили второй рейс!
+
+current = current.next;
+current → null  ← Достигли конца списка
+Шаг 5: Выход из цикла
+while (current !== null) {  // current === null → НЕ входим в цикл
+Цикл завершается.
+
+Шаг 6: Возврат результата
+return flights;
+Что возвращается:
+[
+  { id: "1", planeNumber: "SU123", destination: "Москва", ... },
+  { id: "3", planeNumber: "SU789", destination: "Москва", ... }
+]
+Это массив из 2 элементов!
+
+
+
+// ВХОД: строка
+findFlightsByDestination("Москва")
+
+// ПРОЦЕСС:
+1. Создаём пустой массив flights = []
+2. Проходим по связному списку
+3. Для каждого рейса проверяем destination
+4. Если содержит "Москва" → добавляем в массив
+5. Переходим к следующему узлу
+6. Повторяем, пока не достигнем конца (null)
+
+// ВЫХОД: массив объектов
+return [
+  { id: "1", planeNumber: "SU123", destination: "Москва", ... },
+  { id: "3", planeNumber: "SU789", destination: "Москва", ... }
+]
+*/
+
+
+
+/*
+💡 КАК ЭТО ИСПОЛЬЗУЕТСЯ В КОДЕ
+В компоненте AirportSearch.tsx:
+tsx
+const handleSearch = () => {
+  const foundFlights = flightList.findFlightsByDestination("Москва");
+  //    ↑
+  //  foundFlights — это МАССИВ
+  
+  setFlights(foundFlights);
+  //         ↑
+  //    Сохраняем массив в state
+};
+Потом в JSX:
+tsx
+{flights.length > 0 ? (
+  <FlightList flights={flights} />
+  //                   ↑
+  //            Передаём массив в компонент
+) : (
+  <div>Не найдено</div>
+)}
+В компоненте FlightList.tsx:
+tsx
+{flights.map((flight) => (
+  //     ↑
+  // Перебираем массив и создаём карточки
+  <div key={flight.id}>...</div>
+))}
+*/
+
 
 	reserveTicket(planeNumber: string): boolean {
 		let current = this.head;

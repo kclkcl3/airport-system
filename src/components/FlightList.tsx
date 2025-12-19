@@ -7,7 +7,9 @@ interface FlightListProps {
   title?: string;
 }
 
-const FlightList: React.FC<FlightListProps> = ({ flights, title = "Все рейсы" }) => {
+// Компонент для отображения списка рейсов
+// проверка на наличие рейсов и отображение соответствующего сообщения
+const FlightList: React.FC<FlightListProps> = ({ flights, title = "Все рейсы" }) => { 
   if (flights.length === 0) {
     return <div className="no-flights">Рейсы не найдены</div>;
   }
@@ -17,7 +19,7 @@ const FlightList: React.FC<FlightListProps> = ({ flights, title = "Все рей
       <h2>{title}</h2>
       <div className="flights-container">
         {flights.map((flight) => (
-          <div key={flight.id} className="flight-card">
+          <div key={flight.id} className="flight-card"> // Используем уникальный ключ для каждого рейса
             <div className="flight-header">
               <h3>Рейс {flight.planeNumber}</h3>
               <span className="destination">{flight.destination}</span>
@@ -38,7 +40,7 @@ const FlightList: React.FC<FlightListProps> = ({ flights, title = "Все рей
               <div className="detail">
                 <label>Свободно:</label>
                 <span className="available-seats">
-                  {flight.totalSeats - flight.soldTickets}
+                  {flight.totalSeats - flight.soldTickets} // всего мест минус проданные билеты
                 </span>
               </div>
             </div>

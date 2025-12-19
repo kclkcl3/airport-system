@@ -6,7 +6,7 @@ export interface Flight {
   arrivalTime: string;
   totalSeats: number;
   soldTickets: number;
-  next?: Flight | null;
+  next?: Flight | null;    // Ссылка на следующий рейс (может быть пустой)
 }
 
 export interface FlightNode {
