@@ -28,7 +28,7 @@ const App: React.FC = () => {
 		setFlights(flightList.getAllFlights());
 	}, [flightList, updateTrigger]);
 
-/*
+	/*
 Пример
 // 1. Пользователь добавляет рейс
 handleFlightAdd(newFlight);
@@ -186,7 +186,7 @@ useEffect(() => {
 					</div>
 				)}
 			</div>
-			// {renderContent()} — вызов функции, которая возвращает JSX для отображения в зависимости от activeMenu
+			{/* // {renderContent()} — вызов функции, которая возвращает JSX для отображения в зависимости от activeMenu */}
 			<main className='main-content'>{renderContent()}</main>
 		</div>
 	);
