@@ -23,8 +23,9 @@ const AddFlight: React.FC<AddFlightProps> = ({ onFlightAdd }) => {
 		totalSeats: '', // общее количество мест
 		soldTickets: '', // количество проданных билетов
 	});
-	const [message, setMessage] = useState<{ // состояние для хранения сообщения об ошибке или успехе
-		type: 'error' | 'success'; 
+	const [message, setMessage] = useState<{
+		// состояние для хранения сообщения об ошибке или успехе
+		type: 'error' | 'success';
 		text: string; // текст сообщения или null, если сообщения нет
 	} | null>(null);
 
@@ -43,7 +44,14 @@ const AddFlight: React.FC<AddFlightProps> = ({ onFlightAdd }) => {
 			setMessage({ type: 'error', text: 'Заполните все обязательные поля' });
 			return;
 		}
-		
+
+		if (new Date(formData.departureTime) >= new Date(formData.arrivalTime)) {
+			setMessage({
+				type: 'error',
+				text: 'Время прибытия должно быть позже времени вылета',
+			});
+			return;
+		}
 		// Преобразование строковых значений в числа, потому что значения из input приходят в виде строк
 		const totalSeats = parseInt(formData.totalSeats);
 		const soldTickets = parseInt(formData.soldTickets || '0');
@@ -55,7 +63,7 @@ const AddFlight: React.FC<AddFlightProps> = ({ onFlightAdd }) => {
 				type: 'error',
 				text: 'Общее количество мест должно быть положительным числом',
 			});
-			return; 
+			return;
 		}
 
 		if (soldTickets < 0 || soldTickets > totalSeats) {
@@ -93,17 +101,17 @@ const AddFlight: React.FC<AddFlightProps> = ({ onFlightAdd }) => {
 		setMessage({ type: 'success', text: 'Рейс успешно добавлен!' });
 	};
 
-
 	// Обработчик изменения полей формы
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { // событие изменения значения в input, обновляет состояние formData при вводе данных пользователем
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		// событие изменения значения в input, обновляет состояние formData при вводе данных пользователем
 		const { name, value } = e.target; // достаем имя и значение измененного поля из события
-		setFormData((prev) => ({ 
+		setFormData((prev) => ({
 			...prev, // оператор spread ...prev копирует все предыдущие значения из состояния formData
 			[name]: value, // а затем обновляет только то поле, которое изменилось, используя вычисляемое имя свойства [name]
 		}));
 	};
 
-/*
+	/*
 e: React.ChangeEvent<HTMLInputElement> - это тип события в TypeScript для React, который используется для типизации параметра e (события) в функциях-обработчиках событий для HTML-элементов <input>, например, при изменении значения поля ввода (onChange). React.ChangeEvent – это синтетическое событие React, а <HTMLInputElement> указывает, что это событие относится к элементу типа <input>, позволяя безопасно обращаться к его свойствам, таким как e.target.value (новое значение поля).
 */
 
@@ -128,7 +136,7 @@ e: React.ChangeEvent<HTMLInputElement> - это тип события в TypeScr
 						name='planeNumber' //имя поля (используется в handleChange)
 						value={formData.planeNumber} // значение из состояния formData
 						onChange={handleChange} // при изменении вызывается handleChange для обновления состояния
-						required 
+						required
 					/>
 				</div>
 
@@ -197,3 +205,4 @@ e: React.ChangeEvent<HTMLInputElement> - это тип события в TypeScr
 };
 
 export default AddFlight;
+
